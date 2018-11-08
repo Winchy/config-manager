@@ -1,2 +1,4 @@
 # config-manager
-A simple configuration management platform.
+
+> A simple configuration management platform
+

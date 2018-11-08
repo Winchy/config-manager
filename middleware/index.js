@@ -1,0 +1,1 @@
+module.exports.vueSSR = require("./vue-ssr-middleware")
