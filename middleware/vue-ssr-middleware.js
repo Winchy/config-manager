@@ -29,6 +29,8 @@ module.exports = function(req, res, next) {
             if (err.code == 404) {
                 res.status(404).end('Page not fount -- vue-router');
             } else {
+                console.log(err);
+                throw err;
                 res.status(500).end('Internal Server Error -- vue-router');
             }
         });

@@ -43,8 +43,8 @@ app.use("/dist", express.static(path.join(__dirname, "dist"), {
 app.use("/rest", serverRouter);
 
 // client router
-app.get("/", middleware.vueSSR, function(req, res) {
-    res.renderVue("index");
+app.get("/*", middleware.vueSSR, function(req, res) {
+    res.renderVue && res.renderVue("index") || (!res.renderVue && res.end(""));
 });
 
 // Server routers
@@ -64,7 +64,7 @@ function error404handler(req, res) {
         },
     };
     res.statusCode = 404;
-    res.renderVue("error.vue", data, req.vueOptions);
+    res.renderVue && res.renderVue("error.vue", data, req.vueOptions) || (!res.renderVue && res.end("404"));
 }
 app.use(error404handler);
 
@@ -83,7 +83,7 @@ function genericErrorHandler(error, req, res, next) {
         error: error.stack,
     };
     if (res.statusCode) {
-        res.renderVue("error.vue", data);
+        res.renderVue && res.renderVue("error.vue", data) || (!res.renderVue && res.end(res.statusCode));
     } else {
         next();
     }
