@@ -13,43 +13,35 @@
             </ul>
         <div class='create-form-container popup-container' v-if='showingCreateForm'>
             <div class='popup-content'>
-                <form class="create-form" @submit.prevent='craeteNewTemplate'>
+                <form class="create-form" @submit.prevent='createNewTemplate'>
                     <div class='form-header'>
                         <label>模板名</label>
                         <span class='prop-item'><label>英文:</label><input v-model='formData.name' type="text"></input></span>
                         <span class='prop-item'><label>中文:</label><input v-model='formData.desc' type="text"></input></span>
                     </div>
                     <hr/>
-                    <ul>
+                    <ul class='ui-property'>
                         <li class='property-li' v-for='(item, i) in formData.props'>
                             <div>
                                 <div class='prop-item'><label>英文名:</label><input v-model='item.name' type='text'></input></div>
                                 <div class='prop-item'><label>中文名:</label><input v-model='item.desc' type='text'></input></div>
                                 <div class='prop-item'>
                                     <label>类型:</label>
-                                    <select v-model='item.dataType'>
-                                        <option v-for='item in dataTypes' value='item'>{{dataTypeNames[item]}}</option>
+                                    <select v-model='item.dataType' @change="changeDataType(i, $event)" data-idx='i'>
+                                        <option v-for='item in dataTypes' v-bind:value='item'>{{dataTypeNames[item]}}</option>
                                     </select>
+                                    <span v-if='item.dataType=="datatype.template"'><lable>模板名:</lable><input v-model='item.templateName'></input></span>
                                 </div>
                                 <div class='prop-item'><label>数组</label><input type="checkbox" v-model='item.isList'></input></div>
                             </div>
-                            <div class='prop-action' @click='removeProp'>[&nbsp;-&nbsp;]</div>
-                        </li>
-                        <li class='property-li'>
-                            <div>
-                                <div class='prop-item'><label>英文名:</label><input v-model='newProp.name' type='text'></input></div>
-                                <div class='prop-item'><label>中文名:</label><input v-model='newProp.desc' type='text'></input></div>
-                                <div class='prop-item'>
-                                    <label>类型:</label>
-                                    <select v-model='newProp.dataType'>
-                                        <option v-for='item in dataTypes' value='item'>{{dataTypeNames[item]}}</option>
-                                    </select>
-                                </div>
-                                <div class='prop-item'><label>数组:</label><input type="checkbox" v-model='newProp.isList'></input></div>
-                            </div>
-                            <div class='prop-action' @click='addProp'>[&nbsp;+&nbsp;]</div>
+                            <div v-if='i == formData.props.length - 1' class='prop-action' @click='addProp()'>[&nbsp;+&nbsp;]</div>
+                            <div v-else class='prop-action' @click='removeProp(i)'>[&nbsp;-&nbsp;]</div>
                         </li>
                     </ul>
+                    <div class='form-actions'>
+                        <button @click.prevent='showingCreateForm = false'>取消</button>
+                        <button>保存</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -64,7 +56,7 @@ export default {
     data: () => ({
         templates: [],
         showingCreateForm: false,
-        formData: {name: '', desc: '', props: []},
+        formData: {name: '', desc: '', props: [{}]},
         newProp: {},
         dataTypes: DataTypes,
         dataTypeNames: DataTypeNames,
@@ -86,27 +78,47 @@ export default {
         console.log(this.templates);
     },
     methods: {
-        craeteNewTemplate: function() {
+        createNewTemplate: function() {
             console.log("createNewTemplate");
+            this.saveTemplate();
         },
-        removeProp: function() {
-
+        removeProp: function(idx) {
+            console.log(idx);
+            this.formData.props = this.formData.props || [];
+            this.formData.props.splice(idx, 1);
+            console.log(this.formData.props);
         },
         addProp: function() {
-            console.log('sdfasd');
             this.formData.props = this.formData.props || [];
             this.formData.props.push({name: ''});
             console.log(this.formData.props);
+        },
+        saveTemplate: function() {
+            if (this.validateTemplate(this.formData)) {
+                let newTemp = new Template(this.formData.name, this.formData.desc);
+                this.formData.props.forEach(prop => {
+                    newTemp.props.push(new TemplateProperty(prop));
+                })
+                this.templates.push(newTemp);
+                this.showingCreateForm = false;
+                console.log(this.templates);
+            }
+        },
+        validateTemplate: function(template) {
+            return true;
+        },
+        changeDataType: function(i, event) {
+            var item = this.formData.props[i];
+            item.dataType = event.target.value;
+            item.name = 'asdfasdf';
+            // this.formData.props.splice(i, 1, item);
+            console.log(item, event);
         }
     }
 };
 </script>
 
 <style scoped>
-
-div {
-    font-size: 14px;
-}
 
 .template-list-header, .ul-templates {
     padding: 10px 20px;
@@ -173,29 +185,14 @@ div {
     line-height: 25px;
 }
 
-.popup-container {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.3);
-}
-
-.popup-content {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 5px;
-    padding: 20px;
-    background-color: white;
-}
-
 .create-form {
     width: 600px;
-    height: 500px;
-    overflow-y: scroll;
+    height: 600px;
+}
+
+.ui-property {
+    height: calc(100% - 70px);
+    overflow-y: auto;
 }
 
 .property-li {
@@ -216,10 +213,23 @@ div {
 .prop-item {
     height: 25px;
     line-height: 25px;
+    margin-right: 20px;
+}
+
+.prop-item>label {
+    margin-right: 10px;
 }
 
 .prop-action {
     width: 50px;
+}
+
+.form-actions {
+    float: right;
+}
+
+.form-actions > button {
+    margin-left: 20px;
 }
 
 </style>
