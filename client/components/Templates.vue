@@ -7,7 +7,7 @@
                 <li v-for='item in templates'>
                     <span class='template-name'>{{item.name}}<br/>{{item.desc}}</span>
                     <ul class='ul-template-props'>
-                        <li class='template-prop' v-for='prop in item.props'><span>{{prop.desc}}:</span><span>{{prop.dataType}}</span><span v-if='prop.isList'> &#10004;数组</span></span></li>
+                        <li class='template-prop' v-for='prop in item.props'><span>{{prop.desc}}:</span><span>{{dataTypeNames[prop.dataType]}}</span><span v-if='prop.isList'> &#10004;数组</span></span></li>
                     </ul>
                 </li>
             </ul>
@@ -16,23 +16,28 @@
                 <form class="create-form" @submit.prevent='createNewTemplate'>
                     <div class='form-header'>
                         <label>模板名</label>
-                        <span class='prop-item'><label>英文:</label><input v-model='formData.name' type="text"></input></span>
-                        <span class='prop-item'><label>中文:</label><input v-model='formData.desc' type="text"></input></span>
+                        <span class='prop-item'><!-- <label>英文:</label> --><input v-model='formData.name' type="text"></input></span>
+                        <span class='prop-item'><label>描述:</label><input v-model='formData.desc' type="text"></input></span>
                     </div>
                     <hr/>
                     <ul class='ui-property'>
                         <li class='property-li' v-for='(item, i) in formData.props'>
                             <div>
                                 <div class='prop-item'><label>英文名:</label><input v-model='item.name' type='text'></input></div>
-                                <div class='prop-item'><label>中文名:</label><input v-model='item.desc' type='text'></input></div>
+                                <div class='prop-item'><label>描述:</label><input v-model='item.desc' type='text'></input></div>
                                 <div class='prop-item'>
                                     <label>类型:</label>
                                     <select v-model='item.dataType' @change="changeDataType(i, $event)" data-idx='i'>
                                         <option v-for='item in dataTypes' v-bind:value='item'>{{dataTypeNames[item]}}</option>
                                     </select>
-                                    <span v-if='item.dataType=="datatype.template"'><lable>模板名:</lable><input v-model='item.templateName'></input></span>
+                                    <span v-if='item.dataType=="datatype.template"'><lable>&nbsp;&nbsp;模板:</lable><!-- <input v-model='item.templateName'></input> -->
+                                        <select v-model='item.templateName'>
+                                            <option v-for='item in templates' :value='item.name'>{{item.desc}}</option>
+                                        </select>
+                                    </span>
                                 </div>
                                 <div class='prop-item'><label>数组</label><input type="checkbox" v-model='item.isList'></input></div>
+                                <div class='prop-item'><label>可空</label><input type="checkbox" v-model='item.optinal'></input></div>
                             </div>
                             <div v-if='i == formData.props.length - 1' class='prop-action' @click='addProp()'>[&nbsp;+&nbsp;]</div>
                             <div v-else class='prop-action' @click='removeProp(i)'>[&nbsp;-&nbsp;]</div>
@@ -99,6 +104,7 @@ export default {
                 this.formData.props.forEach(prop => {
                     newTemp.props.push(new TemplateProperty(prop));
                 })
+                this.formData = {};
                 this.templates.push(newTemp);
                 this.showingCreateForm = false;
                 console.log(this.templates);
@@ -110,7 +116,6 @@ export default {
         changeDataType: function(i, event) {
             var item = this.formData.props[i];
             item.dataType = event.target.value;
-            item.name = 'asdfasdf';
             // this.formData.props.splice(i, 1, item);
             console.log(item, event);
         }

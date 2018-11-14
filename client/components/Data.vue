@@ -16,7 +16,7 @@
             <div class='collection-table'>
                 <div class='collection-table-header'>
                     <div v-for='prop in currentTemplate.props' class='collection-cell'>{{prop.desc}}</div>
-                    <div class='collection-cell'><a class='row-action' @click.prevent='' href=''>[&nbsp;+&nbsp;]</a></div>
+                    <div class='collection-cell'><a class='row-action' @click.prevent='showingCollectionForm = true' href=''>[&nbsp;+&nbsp;]</a></div>
                 </div>
                 <div v-for='item in collections' class='collection-row'>
                     <div v-for='value in item' class='collection-cell'>{{value}}</div>
@@ -32,7 +32,12 @@
                 <form class='create-project-form' @submit.prevent='addNewDocument'>
                     <div class='input-item'><label>配置名:</label><input type='text' v-model='newDocument.name'/></div>
                     <div class='input-item'><label>配置描述:</label><input type='text' v-model='newDocument.desc'/></div>
-                    <div class='input-item'><label>模板名:</label><input type='text' v-model='newDocument.templateName'/></div>
+                    <div class='input-item'>
+                        <label>模板:</label>
+                        <select v-model='newDocument.templateName'>
+                            <option v-for='item in templates' :value="item.name">{{item.desc}}</option>
+                        </select>
+                    </div>
                     <div class='form-actions'>
                         <button @click.prevent='showingDocumentForm = false'>取消</button>
                         <button>保存</button>
@@ -43,10 +48,18 @@
 
         <div v-if='showingCollectionForm' class='popup-container'>
             <div class='popup-content'>
-                <form class='create-project-form' @submit.prevent='addNewDocument'>
-                    <div class='input-item'><label>项目名:</label><input type='text' v-model='newProjectName'/></div>
+                <form class='create-project-form' @submit.prevent='addNewCollection'>
+                    <div class='input-item' v-for='item in currentTemplate.props'>
+                        <label>{{item.desc}}:</label>
+                        <button v-if='item.dataType == "datatype.image"' type='text' v-model='newCollection[item.name]'>上传</button>
+                        <input v-if='item.dataType != "datatype.image" && item.dataType != "datatype.template"' type='text' v-model='newCollection[item.name]'/>
+                        <span v-if='item.dataType == "datatype.template"'>
+                            <button>输入</button>
+                            <button>选择</button>
+                        </span>
+                    </div>
                     <div class='form-actions'>
-                        <button @click.prevent='showingDocumentForm = false'>取消</button>
+                        <button @click.prevent='showingCollectionForm = false'>取消</button>
                         <button>保存</button>
                     </div>
                 </form>
@@ -63,28 +76,20 @@ export default {
         project: "",
         documents: [
             {name: "shopInfo", desc: "商店信息", templateName: "article"},
-            {name: "toiletInfo", desc: "厕所信息"},
-            {name: "scenicInfo", desc: "景点信息"},
-            {name: "hotelInfo", desc: "酒店"},
-            {name: "scenicDetail", desc: "景点详情"},
-            {name: "shopInfo", desc: "商店信息"},
-            {name: "shopInfo", desc: "商店信息"},
+            {name: "toiletInfo", desc: "厕所信息", templateName: "section"},
+            {name: "scenicInfo", desc: "景点信息", templateName: "paragraph"},
+            {name: "hotelInfo", desc: "酒店", templateName: "article"},
+            {name: "scenicDetail", desc: "景点详情", templateName: "paragraph"},
+            {name: "shopInfo", desc: "商店信息", templateName: "article"},
+            {name: "shopInfo", desc: "商店信息", templateName: "paragraph"},
         ],
-        collections: [
-            {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
-            {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
-            {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
-            {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
-            {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
-            {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
-            {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
-            {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
-        ],
+        collections: [],
         templates: [],
         newDocument: {name: '', desc: '', templateName: ''},
+        newCollection: {},
         showingDocumentForm: false,
         currentDocIndex: 0,
-        showingCollectionForm: 0,
+        showingCollectionForm: false,
         currentTemplate: {}
     }),
     mounted: function() {
@@ -105,19 +110,55 @@ export default {
         this.templates = this.templates.concat([paragraphTemplate, sectionTemplate, articleTemplate]);
 
         this.currentTemplate = articleTemplate;
+
+        this.showData({}, 0);
     },
     methods: {
         showData: function(item, i) {
             this.currentDocIndex = i;
+            this.collections = (i !== 0)? [] : [
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+                {name: '游大栅栏', subTitle: '大栅栏是个好地方', image: '', sections: []},
+            ];
+            this.templates.forEach(template => {
+                if (template.name === this.documents[i].templateName) {
+                    this.currentTemplate = template;
+                }
+            }) 
         },
         addNewDocument: function() {
             if (this.newDocument.name && this.newDocument.desc && this.newDocument.templateName) {
                 this.documents.push(this.newDocument);
+                this.showData({}, this.documents.length - 1);
                 this.showingDocumentForm = false;
+                this.newDocument = {};
             }
         },
         addNewCollection: function() {
             this.showingCollectionForm = false;
+            let collection = {};
+            this.currentTemplate.props.forEach(prop => {
+                collection[prop.name] = '{}';
+            });
+            console.log(this.newCollection);
+            Object.assign(collection, this.newCollection);
+            this.collections.push(collection);
+            this.newCollection = {};
         }
     }
   };
@@ -153,6 +194,7 @@ input {
 
 .data-content {
     display: flex;
+    align-items: flex-start;
 }
 
 .selected-document {
