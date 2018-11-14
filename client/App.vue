@@ -3,9 +3,9 @@
     <header class='top-pannel'>
         <h3 class='title-main'>配置管理平台</h3>
         <nav class='nav-main'>
-            <router-link to='/' class='nav-item-main'>首页</router-link>
-            <router-link to='/templates' class='nav-item-main'>模板</router-link>
-            <router-link to='/projects' v-on:showdata='console.log($event, "----")' class='nav-item-main'>项目</router-link>
+            <router-link to='/' class='nav-item-main' append>首页</router-link>
+            <router-link to='/templates' class='nav-item-main' append>模板</router-link>
+            <router-link to='/projects' v-on:showdata='console.log($event, "----")' class='nav-item-main' append>项目</router-link>
         </nav>
     </header>
     

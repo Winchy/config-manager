@@ -2,7 +2,7 @@ import {DataTypes} from "./DataTypes.js"
 
 class TemplateProperty {
     constructor (options) {
-        let {name, desc, dataType, isList, templateName, imageSize} = options;
+        let {name, desc, dataType, isList, templateName, imageSize, optional} = options;
         this.name = name;
         this.desc = desc;
         this.dataType = dataType;
@@ -12,6 +12,7 @@ class TemplateProperty {
             console.log("is image, need size");
         }
         this.imageSize = imageSize;
+        this.optional = optional || false;
     }
 
     get dataType () {
