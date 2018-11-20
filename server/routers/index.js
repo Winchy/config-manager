@@ -8,4 +8,11 @@ module.exports = (router) => {
             res.end("index");
         },
     );
+
+    router.get("/:collection/:collectionId", (req, res) => {
+        console.log(req.params);
+        let {collection, collectionId} = req.params;
+        console.log(collection, collectionId)
+        res.end(collection + '&&' + collectionId)
+    })
 };

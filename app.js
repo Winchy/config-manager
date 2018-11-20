@@ -40,7 +40,7 @@ app.use("/dist", express.static(path.join(__dirname, "dist"), {
 
 
 // server routers
-app.use("/rest", serverRouter);
+app.use("/api", serverRouter);
 
 // client router
 app.get("/*", middleware.vueSSR, function(req, res) {
