@@ -38,6 +38,7 @@
     }),
     mounted: function() {
         console.log(this.$router);
+        console.log(this.$store);
     },
     methods: {
         showData: function(project) {
