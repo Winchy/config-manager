@@ -10,8 +10,9 @@ if (process.env.ENV !== undefined) {
 }
 
 dotenv.config({
-    path: "environment/" + envFile,
+    path: "environments/" + envFile,
 });
+
 
 class Config {
   constructor() {
@@ -19,6 +20,10 @@ class Config {
     this.root = __dirname;
     this.rootPath = process.env.ROOT_PATH || "/";
     this.port = Number(process.env.PORT) || 8080;
+    this.dbHost = process.env.DB_HOST;
+    this.dbUser = process.env.DB_USER;
+    this.dbPassword = process.env.DB_PWD;
+    this.dbName = process.env.DB_NAME;
   }
 }
 

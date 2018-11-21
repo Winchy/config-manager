@@ -7,15 +7,17 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --content-base=client/ --open --hot",
-    "test": "ava --watch",
+    "test": "ava",
+    "test:watch": "ava --watch",
     "build": "npm run build-client && npm run build-server",
-    "start": "npm-run-all --parallel build-client:watch build-server:watch start-server",
+    "start": "npm-run-all --parallel build-client build-server start-server",
+    "start:watch": "npm-run-all --parallel build-client:watch build-server:watch start-server",
     "build-client": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "build-client:watch": "cross-env NODE_ENV=production webpack --progress --hide-modules --watch",
+    "build-client:watch": "cross-env NODE_ENV=development webpack --progress --hide-modules --watch",
     "build-server": "cross-env NODE_ENV=production webpack --config webpack.server.config.js --progress --hide-modules",
-    "build-server:watch": "cross-env NODE_ENV=production webpack --config webpack.server.config.js --progress --hide-modules --watch",
+    "build-server:watch": "cross-env NODE_ENV=development webpack --config webpack.server.config.js --progress --hide-modules --watch",
     "start-server": "nodemon app.js",
-    "start-server-with-test": "npm-run-all --parallel start-server test"
+    "start-server-test": "npm-run-all --parallel start-server test:watch"
   },
   "ava": {
     "files": [
@@ -24,7 +26,7 @@
     "sources": [
       "server/**/*.js"
     ],
-    "verbose": false
+    "verbose": true
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -36,6 +38,7 @@
     "express-validator": "^5.3.0",
     "glob": "^7.1.3",
     "helmet": "^3.15.0",
+    "mongoose": "^5.3.13",
     "morgan": "^1.9.1",
     "npm-run-all": "^4.1.3",
     "sass": "^1.14.3",

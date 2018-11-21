@@ -4,6 +4,6 @@ test('config', t => {
     t.pass();
 })
 
-test('abcd', t => {
-    t.fail();
+test('goo', t => {
+    t.pass();
 })

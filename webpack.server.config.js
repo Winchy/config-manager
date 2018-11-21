@@ -14,16 +14,6 @@ var webpackConfig = merge (baseWebpackConfig, {
     filename: 'server.bundle.js',
     libraryTarget: 'commonjs2'
   },
-  externals: Object.keys(require('./package.json').dependencies),
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': 'production'
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    })
-  ]
+  externals: Object.keys(require('./package.json').dependencies)
 })
 module.exports = webpackConfig
