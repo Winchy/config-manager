@@ -15,4 +15,8 @@ module.exports = (router) => {
         console.log(collection, collectionId)
         res.end(collection + '&&' + collectionId)
     })
+
+    router.get('/templates', (req, res) => {
+        res.json([{a: 1, b: 2}, {}]);
+    })
 };

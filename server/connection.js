@@ -19,12 +19,17 @@
 // }, 1000)
 // console.log('')
 // module.exports = {};
+
 const config = require('../config')
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 mongoose.connect(`mongodb://${config.dbUser}:${config.dbPassword}@${config.dbHost}/${config.dbName}`, { useNewUrlParser: true });
+// mongoose.connect(`mongodb://${config.dbHost}/${config.dbName}`, { useNewUrlParser: true });
 
+module.exports = mongoose;
+
+/*
 var TestSchema = new Schema({
     "b": Number,
     "a": Number
@@ -79,3 +84,4 @@ TestModel.findOneAndUpdate({b: 2}, {$set: {b: 5}}, {new: false}, (err, result) =
 
 // tm.save();
 // tm.find().then(result=>console.log(result))
+*/

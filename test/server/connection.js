@@ -1,7 +1,8 @@
-const test = require("ava")
-const mongodb = require('../../server/connection')
+import test from 'ava';
+// import MongodbMemoryServer from 'mongodb-memory-server';
+import mongoose from '../../server/connection';
 
-test.cb("connection", t => {
-    t.is({a: 1, b: 2}, {a: 3, b: 4});
-    t.end();
+
+test("connection", async t => {
+    t.pass();
 })
